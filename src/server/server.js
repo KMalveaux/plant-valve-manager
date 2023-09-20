@@ -1,10 +1,24 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 const app = express();
+require("dotenv").config();
 
-app.get("/Authenticate", function (req, res) {
-  console.log("Request to authenticate received.");
+const port = process.env.PORT || 3000;
+
+app.use(bodyParser.json());
+
+app.post("/authenticate", (req, res) => {
+  const { username, passwordHash } = req.body;
+
+  console.log(
+    `Authentication req received: Username=${username} PasswordHash=${passwordHash}`
+  );
+  res
+    .status(200)
+    .json({ success: true, message: "Authentication request received" });
 });
 
-app.listen(4000, function () {
-  console.log("Server listening on localhost:4000");
+app.listen(port, function () {
+  console.log(`Server listening on localhost:${port}`);
 });

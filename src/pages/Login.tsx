@@ -3,22 +3,26 @@ import { Link } from "react-router-dom";
 import "../css/Login.css";
 import axios from "axios";
 
-import MyTextInput from "../components/MyTextInput";
+const serverUrl = "http://localhost:9000";
 
 const Login = () => {
   const [username, setUsername] = useState("");
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+  };
 
   return (
     <div className="pageBase">
       <div className="login-container">
         <p>Sign in</p>
-        <MyTextInput placeholder={"Username"} hideText={false} />
-        <MyTextInput
-          id="passwordInput"
+        <input placeholder={"Username"} onChange={handleUsernameChange} />
+        <input
           placeholder={"Password"}
-          hideText={true}
+          id={"passwordInputID"}
+          type={"password"}
         />
-        <button onClick={() => SignUp}>Login</button>
+        <button onClick={() => SignUp(username)}>Login</button>
         <Link to="/Blank">Register</Link>
       </div>
     </div>
@@ -26,22 +30,42 @@ const Login = () => {
 };
 
 async function hashPassword(password: string) {
-  const bcrypt = require("bcrypt");
+  const bcrypt = require("bcryptjs");
 
-  const saltRounds = 10; // The number of salt rounds determines the hashing complexity
+  const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   return hashedPassword;
 }
 
-const SignUp = async () => {
-  const passwordInput = document.getElementById("passwordInput");
+const SignUp = async (username: string) => {
+  const passwordInput = document.getElementById(
+    "passwordInputID"
+  ) as HTMLInputElement;
+
+  const formData = new FormData();
+  formData.append("username", username);
+
   if (passwordInput !== null) {
+    console.log("Original password " + passwordInput.value);
     const hashedPassword = await hashPassword(passwordInput.value);
-    // Now you can use 'hashedPassword' as needed
+    formData.append("passwordHash", hashedPassword);
+    console.log("Password hash" + hashedPassword);
   } else {
-    // Handle the case where the element with the ID 'passwordInput' is not found
-    console.error("Element with ID 'passwordInput' not found.");
+    console.error("Element with ID 'passwordInputID' not found.");
   }
+
+  axios
+    .post(`${serverUrl}/authenticate`, formData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      console.log("Response:", response.data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 };
 
 export default Login;
