@@ -23,3 +23,5 @@ app.post("/authenticate", (req, res) => {
 app.listen(port, function () {
   console.log(`Server listening on localhost:${port}`);
 });
+
+// Look into Sequelize for db interactions
