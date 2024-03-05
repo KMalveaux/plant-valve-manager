@@ -1,10 +1,12 @@
+// Third Party Library Imports
 import axios from "axios";
 
-const serverUrl = "http://localhost:9000";
+const serverUrl = "http://localhost:3000";
 const bcrypt = require("bcryptjs");
 
 /**
  * Performs user signup.
+ * 
  * @param username - The username for the new user.
  * @param password - The password for the new user.
  * @returns A Promise that resolves when the signup process is complete.
@@ -39,6 +41,7 @@ export const signUp = async (username: string, password: string) => {
 
 /**
  * Hashes a password using bcrypt.
+ * 
  * @param password - The password to be hashed.
  * @returns A Promise that resolves to the hashed password.
  */
